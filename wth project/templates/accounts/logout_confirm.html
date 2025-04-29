@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Выход из системы{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body text-center p-5">
+                    <div class="mb-4">
+                        <i class="bi bi-box-arrow-right text-primary" style="font-size: 3rem;"></i>
+                    </div>
+                    <h2 class="h4 mb-4">Вы уверены, что хотите выйти?</h2>
+                    <p class="text-muted mb-4">После выхода вам потребуется снова войти в систему для доступа к вашим данным.</p>
+                    
+                    <form method="post" class="d-flex justify-content-center gap-3">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger px-4">
+                            <i class="bi bi-box-arrow-right me-2"></i>
+                            Выйти
+                        </button>
+                        <a href="{% url 'profile' %}" class="btn btn-outline-secondary px-4">
+                            <i class="bi bi-x-circle me-2"></i>
+                            Отмена
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border: none;
+        border-radius: 15px;
+        background: #fff;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-danger {
+        background-color: var(--danger-color);
+        border: none;
+    }
+    
+    .btn-danger:hover {
+        background-color: #bb2d3b;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(220, 53, 69, 0.2);
+    }
+    
+    .btn-outline-secondary {
+        border: 1px solid var(--secondary-color);
+        color: var(--secondary-color);
+    }
+    
+    .btn-outline-secondary:hover {
+        background-color: var(--secondary-color);
+        color: #fff;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(108, 117, 125, 0.2);
+    }
+    
+    .text-primary {
+        color: var(--primary-color) !important;
+    }
+    
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 2rem !important;
+        }
+        
+        .btn {
+            padding: 0.6rem 1.2rem;
+            font-size: 0.9rem;
+        }
+    }
+</style>
+{% endblock %}

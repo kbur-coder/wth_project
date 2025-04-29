@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+
+{% block title %}Счет {{ account.number }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">Счет {{ account.number }}</h2>
+                <span class="badge bg-{% if account.balance >= 0 %}success{% else %}danger{% endif %} fs-6">
+                    Баланс: {{ account.balance }} {{ account.currency }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Детали счета</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Тип:</span>
+                            <span class="fw-bold">{{ account.get_account_type_display }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Валюта:</span>
+                            <span class="fw-bold">{{ account.get_currency_display }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>Открыт:</span>
+                            <span class="fw-bold">{{ account.opened_date|date:"d M Y" }}</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Быстрые действия</h5>
+                </div>
+                <div class="card-body">
+                    <a href="{% url 'transfer' %}?from_account={{ account.pk }}" class="btn btn-success w-100 mb-3">
+                        <i class="bi bi-arrow-up-right"></i> Перевести деньги
+                    </a>
+                    {% if account.balance == 0 %}
+                    <a href="{% url 'account-delete' account.pk %}" class="btn btn-danger w-100">
+                        <i class="bi bi-trash"></i> Закрыть счет
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Последние транзакции</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for transaction in account.incoming_transactions.all|slice:":5" %}
+                        <div class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1 text-success">+{{ transaction.amount }} {{ account.currency }}</h6>
+                                <small>{{ transaction.date|timesince }} назад</small>
+                            </div>
+                            <p class="mb-1">От: {{ transaction.from_account.number }}</p>
+                            {% if transaction.description %}
+                            <small class="text-muted">{{ transaction.description }}</small>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+
+                        {% for transaction in account.outgoing_transactions.all|slice:":5" %}
+                        <div class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1 text-danger">-{{ transaction.amount }} {{ account.currency }}</h6>
+                                <small>{{ transaction.date|timesince }} назад</small>
+                            </div>
+                            <p class="mb-1">Кому: {{ transaction.to_account.number }}</p>
+                            {% if transaction.description %}
+                            <small class="text-muted">{{ transaction.description }}</small>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+
+                        {% if not account.incoming_transactions.all and not account.outgoing_transactions.all %}
+                        <div class="list-group-item">
+                            <p class="mb-0 text-muted">Пока нет транзакций</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer text-center">
+                        <a href="{% url 'transaction-list' %}?account={{ account.pk }}" class="btn btn-sm btn-outline-primary">
+                            Просмотреть все транзакции
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 15px;
+        border: none;
+    }
+    
+    .card-header {
+        padding: 1.25rem;
+        border-bottom: none;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .list-group-item {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid #f0f0f0;
+        transition: all 0.3s ease;
+    }
+    
+    .list-group-item:hover {
+        background-color: #f8f9fa;
+        transform: translateX(5px);
+    }
+    
+    .list-group-item:last-child {
+        border-bottom: none;
+    }
+    
+    .badge {
+        padding: 0.5em 1em;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+    
+    .btn-success {
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-success:hover {
+        transform: translateY(-1px);
+    }
+    
+    .btn-danger {
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-danger:hover {
+        transform: translateY(-1px);
+    }
+    
+    .btn-outline-primary {
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-outline-primary:hover {
+        transform: translateY(-1px);
+    }
+    
+    .text-success {
+        color: #198754 !important;
+    }
+    
+    .text-danger {
+        color: #dc3545 !important;
+    }
+    
+    .text-muted {
+        color: #6c757d !important;
+    }
+    
+    .fw-bold {
+        font-weight: 600 !important;
+    }
+</style>
+{% endblock %}

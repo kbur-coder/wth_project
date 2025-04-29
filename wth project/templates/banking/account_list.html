@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block title %}Мои счета{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Мои счета</h2>
+        <a href="{% url 'account-create' %}" class="btn btn-success">
+            <i class="bi bi-plus-lg"></i> Открыть новый счет
+        </a>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Номер счета</th>
+                            <th>Тип</th>
+                            <th>Баланс</th>
+                            <th>Валюта</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for account in accounts %}
+                        <tr>
+                            <td>{{ account.number }}</td>
+                            <td>{{ account.get_account_type_display }}</td>
+                            <td class="fw-bold">{{ account.balance }}</td>
+                            <td>{{ account.get_currency_display }}</td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="{% url 'account-detail' account.pk %}" class="btn btn-sm btn-info">
+                                        <i class="bi bi-eye"></i> Просмотр
+                                    </a>
+                                    {% if account.balance == 0 %}
+                                    <a href="{% url 'account-delete' account.pk %}" class="btn btn-sm btn-danger">
+                                        <i class="bi bi-x-circle"></i> Закрыть
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-4">У вас пока нет счетов</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 15px;
+        border: none;
+    }
+    
+    .table {
+        margin-bottom: 0;
+    }
+    
+    .table thead th {
+        border-bottom: none;
+        padding: 1rem;
+        font-weight: 600;
+        color: #495057;
+        background-color: #f8f9fa;
+    }
+    
+    .table tbody td {
+        padding: 1rem;
+        vertical-align: middle;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .table-hover tbody tr:hover {
+        background-color: rgba(0,0,0,0.02);
+        transition: all 0.3s ease;
+    }
+    
+    .btn-success {
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-success:hover {
+        transform: translateY(-1px);
+    }
+    
+    .btn-group {
+        gap: 0.5rem;
+    }
+    
+    .btn-sm {
+        padding: 0.375rem 0.75rem;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-sm:hover {
+        transform: translateY(-1px);
+    }
+    
+    .btn-info {
+        background-color: #0dcaf0;
+        border-color: #0dcaf0;
+    }
+    
+    .btn-info:hover {
+        background-color: #31d2f2;
+        border-color: #31d2f2;
+    }
+    
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+    
+    .btn-danger:hover {
+        background-color: #bb2d3b;
+        border-color: #bb2d3b;
+    }
+    
+    .fw-bold {
+        font-weight: 600 !important;
+    }
+</style>
+{% endblock %}

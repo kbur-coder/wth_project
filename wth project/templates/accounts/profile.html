@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Мой профиль{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">Мой профиль</h2>
+                    <div class="profile-info">
+                        <p class="profile-item"><strong>Имя пользователя:</strong> {{ user.username }}</p>
+                        <p class="profile-item"><strong>Имя:</strong> {{ user.get_full_name }}</p>
+                        <p class="profile-item"><strong>Email:</strong> {{ user.email }}</p>
+                        <p class="profile-item"><strong>Телефон:</strong> {{ user.phone|default:"Не указан" }}</p>
+                        <p class="profile-item"><strong>Адрес:</strong> {{ user.address|default:"Не указан" }}</p>
+                    </div>
+                    <div class="text-center mt-4">
+                        <a href="{% url 'edit-profile' %}" class="btn btn-primary">Редактировать профиль</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 15px;
+        border: none;
+    }
+    
+    .profile-info {
+        padding: 20px;
+    }
+    
+    .profile-item {
+        padding: 10px 15px;
+        margin-bottom: 10px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    .profile-item:hover {
+        background-color: #e9ecef;
+        transform: translateX(5px);
+    }
+    
+    .profile-item strong {
+        color: #495057;
+        margin-right: 10px;
+    }
+    
+    .btn-primary {
+        padding: 10px 25px;
+        border-radius: 8px;
+        font-weight: 500;
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        background-color: #0b5ed7;
+        border-color: #0b5ed7;
+        transform: translateY(-1px);
+    }
+</style>
+{% endblock %}

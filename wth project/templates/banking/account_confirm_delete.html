@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Закрыть счет{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-danger shadow">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">Закрыть счет</h4>
+                </div>
+                <div class="card-body">
+                    <p class="mb-4">Вы уверены, что хотите закрыть этот счет?</p>
+                    <div class="alert alert-warning">
+                        <strong>Внимание:</strong> Это действие нельзя отменить. Все связанные карты будут деактивированы.
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ account.number }}</h5>
+                            <p class="card-text">
+                                <span class="badge bg-secondary">{{ account.get_account_type_display }}</span>
+                                <span class="badge bg-info text-dark">{{ account.get_currency_display }}</span>
+                            </p>
+                            <p class="card-text">Баланс: {{ account.balance }} {{ account.currency }}</p>
+                        </div>
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-grid gap-3">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Да, закрыть счет
+                            </button>
+                            <a href="{% url 'account-detail' account.pk %}" class="btn btn-outline-secondary">
+                                Отмена
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 15px;
+        border: none;
+    }
+    
+    .card-header {
+        padding: 1.25rem;
+        border-bottom: none;
+    }
+    
+    .card-body {
+        padding: 2rem;
+    }
+    
+    .alert {
+        border-left: 4px solid #ffc107;
+        border-radius: 8px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .badge {
+        padding: 0.5em 0.75em;
+        border-radius: 8px;
+        font-weight: 500;
+        margin-right: 0.5rem;
+    }
+    
+    .btn-danger {
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-danger:hover {
+        transform: translateY(-1px);
+    }
+    
+    .btn-outline-secondary {
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-outline-secondary:hover {
+        transform: translateY(-1px);
+    }
+    
+    .card-title {
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    
+    .card-text {
+        margin-bottom: 0.5rem;
+    }
+</style>
+{% endblock %}

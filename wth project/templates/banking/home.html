@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4>Welcome, {{ user.get_full_name|default:user.username }}</h4>
+                </div>
+                <div class="card-body">
+                    <p class="lead">Your banking dashboard</p>
+                    <div class="d-grid gap-2 d-md-block">
+                        <a href="{% url 'account-list' %}" class="btn btn-primary me-md-2">
+                            <i class="bi bi-wallet2"></i> My Accounts
+                        </a>
+                        <a href="{% url 'transfer' %}" class="btn btn-success">
+                            <i class="bi bi-send"></i> Make Transfer
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5>Recent Transactions</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for transaction in transactions %}
+                        <div class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1 {% if transaction.to_account.owner == user %}text-success{% else %}text-danger{% endif %}">
+                                    {% if transaction.to_account.owner == user %}+{% else %}-{% endif %}
+                                    {{ transaction.amount }} {{ transaction.from_account.currency }}
+                                </h6>
+                                <small>{{ transaction.date|timesince }} ago</small>
+                            </div>
+                            <p class="mb-1">
+                                From: {% if transaction.from_account.owner == user %}You{% else %}{{ transaction.from_account.number }}{% endif %}
+                                → To: {% if transaction.to_account.owner == user %}You{% else %}{{ transaction.to_account.number }}{% endif %}
+                            </p>
+                            {% if transaction.description %}
+                            <small class="text-muted">{{ transaction.description }}</small>
+                            {% endif %}
+                        </div>
+                        {% empty %}
+                        <div class="list-group-item">
+                            <p class="mb-0 text-muted">No recent transactions</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'transaction-list' %}" class="btn btn-sm btn-outline-primary">
+                        View all transactions
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5>Your Accounts</h5>
+                </div>
+                <div class="card-body">
+                    {% for account in accounts %}
+                    <div class="mb-3 p-3 border rounded">
+                        <h6>{{ account.number }}</h6>
+                        <p class="mb-1">
+                            <span class="badge bg-secondary">{{ account.get_account_type_display }}</span>
+                            <span class="badge bg-info text-dark">{{ account.get_currency_display }}</span>
+                        </p>
+                        <p class="fw-bold fs-5">{{ account.balance }} {{ account.currency }}</p>
+                        <a href="{% url 'account-detail' account.pk %}" class="btn btn-sm btn-outline-primary">
+                            View Details
+                        </a>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted">You don't have any accounts yet.</p>
+                    <a href="{% url 'account-create' %}" class="btn btn-primary">
+                        Open New Account
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .list-group-item {
+        transition: background-color 0.2s;
+    }
+    .list-group-item:hover {
+        background-color: #f8f9fa;
+    }
+    .border-rounded {
+        border-radius: 8px;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}Мои карты{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Мои карты</h2>
+        <a href="{% url 'card-create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Заказать новую карту
+        </a>
+    </div>
+
+    <div class="row">
+        {% for card in cards %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 border-{% if card.is_active %}primary{% else %}secondary{% endif %} shadow-sm">
+                <div class="card-header bg-{% if card.is_active %}primary{% else %}secondary{% endif %} text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">{{ card.get_card_type_display }} Card</h5>
+                        <span class="badge bg-{% if card.is_active %}light text-dark{% else %}dark{% endif %}">
+                            {% if card.is_active %}Активна{% else %}Неактивна{% endif %}
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="text-muted small">Номер карты</div>
+                        <h4 class="mb-1">**** **** **** {{ card.number|slice:"-4:" }}</h4>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="text-muted small">Действует до</div>
+                            <div>{{ card.expiry_date|date:"m/y" }}</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-muted small">Связанный счет</div>
+                            <div>{{ card.account.number }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <div class="d-flex justify-content-between">
+                        <span class="text-muted">{{ card.owner_name }}</span>
+                        <span class="text-muted">{{ card.account.get_currency_display }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> У вас пока нет карт.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 15px;
+        overflow: hidden;
+        transition: transform 0.3s, box-shadow 0.3s;
+        border: none;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+    
+    .card-header {
+        padding: 1.25rem;
+        border-bottom: none;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    .card-footer {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .badge {
+        padding: 0.5em 0.75em;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+    
+    .btn-primary {
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-1px);
+    }
+    
+    .alert {
+        border-radius: 10px;
+        padding: 1rem 1.25rem;
+    }
+    
+    .text-muted {
+        color: #6c757d !important;
+    }
+    
+    h4 {
+        font-weight: 600;
+        color: #212529;
+    }
+</style>
+{% endblock %}
